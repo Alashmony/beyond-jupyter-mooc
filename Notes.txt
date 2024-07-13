@@ -1,0 +1,42 @@
+-- Pull the image
+>> docker pull jupyter/scipy-notebook
+
+-- Run it
+>> docker run jupyter/scipy-notebook
+
+-- Map ports (-p) port_on_host:port_in_image
+>> docker run -p 8888(or any):8888 jupyter/scipy-notebook
+
+-- Run in detached mode (to use terminal normally) -d
+>> docker run -d -p 8888:8888 jupyter/scipy-notebook
+
+-- Find container ID
+>> docker ps
+
+-- Find logs to get the token
+>> docker logs (imageID)
+
+-- You can refer to the container using the first characters that are unique for it
+
+-- Force killing the container will cause containers to delete all your files and when you start it again, you will start from scratch
+-- This code can be only used for emergency or educational purpose
+>> docker rm -f (imageID)
+
+-- To make sure your files are saved, you can either mount a local volume from the machine or a docker volume
+-- Mounting using a certain directory
+-- Find the path with pwd
+>> pwd
+C:\Users\ahmad.alashmony
+
+>> docker run -v C:\Users\ahmad.alashmony:/home/jovyan/work jupyter/scipy-notebook
+
+-- Mounting local volume (using pwd directly)
+>> docker run -v `pwd`:/home/jovyan/work jupyter/scipy-notebook
+
+-- Create a volume
+>> docker volume create vol_name
+vol_name
+
+-- Mount it
+>> docker run -v vol_name:/home/jovyan/work jupyter/scipy-notebook
+
