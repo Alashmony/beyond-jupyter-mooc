@@ -40,3 +40,51 @@ vol_name
 -- Mount it
 >> docker run -v vol_name:/home/jovyan/work jupyter/scipy-notebook
 
+--------------------------------- Chapter 3 ---------------------------------
+
+-- Superset runs on port 8088 by default
+-- Superset has no official docker images, we can use a community image like https://hub.docker.com/r/amancevice/superset/ or https://hub.docker.com/r/tylerfowler/superset
+-- I found an offecial image here apache/superset     apache/superset:fb15278-dev
+-- Superset takes a while to run, it sets up tables in its database before running
+-- In the first run, Superset will require a new secret, generate with `openssl rand -base64 42` and add it to superset_config.py file as `SECRET_KEY = 'YOUR_OWN_RANDOM_GENERATED_SECRET_KEY'`
+
+-- I used the docker compose way instead as per https://superset.apache.org/docs/installation/docker-compose/, here is a video that describes it https://www.youtube.com/watch?v=idCgc1tR1d0
+-- The steps as follows:
+    * step 2.1: git clone --depth=1  https://github.com/apache/superset.git
+    * Step 2.2: cd superset
+    * Step 2.3: docker compose -f docker-compose-non-dev.yml up
+	* Use the following to run the docker image
+		>> docker run -d -p {8088 or any}:8088 {tylerfowler/superset or amancevice/superset}
+
+-- The way by Osama
+	* Step 1: Pull the image `docker pull apache/superset`
+	* Step 2: Get a random key with `openssl rand -base64 42` -> hNpB/hwykAkPYZcjLxqZwIPHOs2G7cjSYg73s++sqy0p1p2IFr3PiFEV
+	* Step 3: Create a container with `docker run -d -p 8080:8088 -e "SUPERSET_SECRET_KEY=hNpB/hwykAkPYZcjLxqZwIPHOs2G7cjSYg73s++sqy0p1p2IFr3PiFEV" --name superset apache/superset`
+   	* Step 4: Create username and password with `docker exec -it superset superset fab create --username alashmony --firstname Ahmad --lastname Alashmony --email a.alashmony@itworx.com --password P@ssM0rd`
+
+-- The venv way (Worked with me)
+	* Step 1: Create a venv `python -m venv 'superset'`
+	* Step 2: Activate it `.\superset\Scripts\activate`
+	* Step 3: Download and install superset `python -m pip install apache-superset`
+	* Step 4: Get a SECRET_KEY with `openssl rand -base64 42` -> hNpB/hwykAkPYZcjLxqZwIPHOs2G7cjSYg73s++sqy0p1p2IFr3PiFEV
+	* Step 5: Add the secret key to the venv:
+		* 5.1: Initiate the file `superset_config.py` in a certain path `/config/path`
+		* 5.2: Add the required sectret in the file 'SECRET_KEY = 'hNpB/hwykAkPYZcjLxqZwIPHOs2G7cjSYg73s++sqy0p1p2IFr3PiFEV'
+		* 5.3: Create an evironment variable: Linux `export SUPERSET_CONFIG_PATH=/config/path/superset_config.py`, Windows `setx SUPERSET_CONFIG_PATH 'C:\config\path\superset_config.py`
+	* Step 6: Set the flask app `export FLASK_APP=superset` or for windows `setx FLASK_APP 'C:\path\to\superset(evironment)\Lib\superset'`
+	* Step 7: Reload the terminal to read the env variables
+	* Step 8: Initiate the DB with `superset db upgrade`
+	* Step 9: Create the admin using `superset fab create-admin`, username alashmony, first, last, email, and P@ssM0rd
+	* Step 10: Init the application `superset init`
+	* Step 11: Run it `superset run -p 8088 --with-threads --reload --debugger`
+	* Step 11: Go to http://localhost:8088
+
+
+
+-- The default username for superset is "admin" and the default password is "superset", in case of setting up a username and password, use yours
+
+
+-- To upload a CSV dataset, go to sources, Upload CSV, choose a table name, file, type the delimiter and save. You should see a success message and find the table.
+-- SQL Lab is a SQL interface allows you to query the data even without leaving the interface, even if the data is a csv.
+-- To defines Dimensions and Measuresm, navigate to Sources -> Tables --> Click the Edit records symbols besides the table name, for the Dimensions, check the "Groupable" and the "Filterable" and Unchkeck the "Sum" 
+
