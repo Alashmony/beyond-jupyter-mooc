@@ -148,3 +148,44 @@ services:
 			- 5432:5432
 `
 
+-- Machine Learning models are not tabular data to store in a structured database
+-- Minio is an object store which is mostly like a key-value store for any type of files
+--  To run a menio container run the following commande:
+>> docker run -p 9000:9000 -t minio/minio server /data
+
+	* The `-t` flag means to attach the console to the container to extract the secret keys which is a requirement for the minio 
+	* The `server /data` means to store data we upload to the server in the '/data' folder in the image
+
+-- Running a docker for minio will require a volume also, create with
+>> docker volume create mn_vol
+
+-- Now rerun it with 
+>> docker run -d -p 9000:9000 -v mn_vol:/data -t minio/minio server /data 
+	* It seems that the port for webUI is changing randomly, i might need to try it in the docker-compose way.
+
+-- To install the minio library in python, just install minio with pip
+>> pip install Minio
+
+-- To interact with minio, you should connect to minio server as follows (the server name is 'minio' if used the docker-compose and localhost if used local machine):
+`
+from minio import Minio
+minio_client = Minio (endpoint = minio:9000, access_key = '', secret_key = '', secure = False)
+`
+
+-- Now, you can create a bucket (folder)
+`
+minio_client.make_bucket('my-folder')
+`
+
+-- You can also write an object (a file called sample_file.txt) into the bucket:
+`
+minio_client.fput_object(bucket_name = 'my-folder', object_name = 'sample_file.txt', file_path = 'C:\\sample_file.txt')
+`
+
+-- To read a file, simply do it:
+`
+minio_client.get_object('my-folder', 'sample_file.txt').data.decode()
+`
+	* The '.data' attribute and the'.decode()' method are used to print what is written in the file
+
+-- minio did not accept the undetscores '_' in a bucket name
