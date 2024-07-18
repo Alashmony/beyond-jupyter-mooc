@@ -88,3 +88,63 @@ vol_name
 -- SQL Lab is a SQL interface allows you to query the data even without leaving the interface, even if the data is a csv.
 -- To defines Dimensions and Measuresm, navigate to Sources -> Tables --> Click the Edit records symbols besides the table name, for the Dimensions, check the "Groupable" and the "Filterable" and Unchkeck the "Sum" 
 
+-- Docker has a tool called docker-compose that collects multiple containers and runs then together (in the same environment) to be able to contact each other
+-- Docker-Compose starts multiple containers, uses docker-compose.yml (instead of Dockerfile), and starts with `docker-compose up` instead of `docker run`
+-- Docker-compose requires using a YAML file which specifies the desired insfrastructure up-front
+-- The docker-compose.yml contains the version and the services to run as follows:
+`
+version: "3"
+services:
+	jupyter:
+		image: jupyter/scipy-notebook
+		container_name: "my_jupyter"
+		ports:
+			- 8888:8888
+	postgres:
+		image: postgres
+		container_name: "my_postgres"
+		ports:
+			- 5432:5432
+`
+-- Now, we can use >> `docker-compose up` to run both images and interact between them
+-- The magic comes when you create a connection from one container to the other, use the container name as the host name you need to connect to. It is used instead of the IP or the hostname of the DB instance.
+-- You can inject a file in a specific folder as below:
+	* Create a folder in the same directory as the docker-compose.yml called 'scripts'
+	* Create a file in that folder called '01_my_script.sh' 
+	* Add the file to the image (in a folder called my_folder) using the docker-compose.yml as below:
+`
+version: "3"
+services:
+	jupyter:
+		image: jupyter/scipy-notebook
+		container_name: "my_jupyter"
+		ports:
+			- 8888:8888
+		volumes:                          	<- This line injects the files as a volume
+			- ./scripts/:/my_folder/		<- This line says to inject all files in the 'scripts' folder into 'my_folder' folder in the image
+	postgres:
+		image: postgres
+		container_name: "my_postgres"
+		ports:
+			- 5432:5432
+`
+-- To add an environment variable (for example, to set JAVA_HOME to /etc/java) to the image use the following:
+`
+version: "3"
+services:
+	jupyter:
+		image: jupyter/scipy-notebook
+		container_name: "my_jupyter"
+		ports:
+			- 8888:8888
+		volumes:
+			- ./scripts/:/my_folder/
+		environment:					<- This line starts setting the environment variables 
+			- JAVA_HOME=/etc/java/		<- This one sets JAVA_HOME to be equal to '/etc/java'
+	postgres:
+		image: postgres
+		container_name: "my_postgres"
+		ports:
+			- 5432:5432
+`
+
