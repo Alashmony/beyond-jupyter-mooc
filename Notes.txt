@@ -189,3 +189,74 @@ minio_client.get_object('my-folder', 'sample_file.txt').data.decode()
 	* The '.data' attribute and the'.decode()' method are used to print what is written in the file
 
 -- minio did not accept the undetscores '_' in a bucket name
+
+-- API Star is a framework to create API end points with automated documentation
+
+-- API Star consists of:
+	* The Handler which is a python function that returns the dictionary (the JSON response object)
+	* The Routes which is a list of routes to call the API end points
+	* The App that contains Handlers and Routes 
+
+-- To define an end point, just import and define them
+`
+from apistar import App, Route
+
+# Define the handler (function)
+def welcome_me(name = None):
+	if name:
+		return {'body':f'Welcome {name}!'}
+	else:
+		return {'body': 'Welcome dear!'}
+
+# Define the routes as a list of routes
+my_routes = [Route('/', method='GET', handler = welcome_me)]
+
+# Define the App
+app = App(routes = my_routes)
+
+# Run the App
+if __name__ == "__main__":
+	app.serve('127.0.0.1', 5000, debug = True)
+`
+
+-- Run the file.py with the normal python shell
+>> python file.py
+
+-- Call the API with curl 
+>> curl http://localhost:5000 
+Welcome dear!
+
+>> curl http://localhost:5000/?name\=Ahmad
+Welcome Ahmad!
+
+-- To create a docker image for API Star, create a docker file as follows:
+`
+From python:3-alpine
+
+WORKDIR /usr/src/app 				<-- This line defines that commands will run in this directory
+
+Run pip --no-cashe-dir install \	<-- The --no-cashe-dir removes cashe used by pip after installation
+	apistar==0.5.41
+
+EXPOSE 8000
+`
+
+-- Then create the docker container and name it apistar with the following:
+>> docker build . -t apistar		<-- the -t tags/flags the image with the name 'apistar'
+
+-- Run the container
+>> docker run -d -p 5000:8000 -v `pwd`:/usr/src/app apistar python app.py
+
+-- Test the container 
+>> http localhost:5000
+.....
+{
+	'body':'Welcome dear!'
+}
+
+-- The course shows how to install app libraries needed for the whole ML model and the API star. dockerfile can be found in ch_06/example_enhanced/
+-- Can use docker to build it with the following noting that it will take some time (10 to 20 minutes) to install the required libraries
+>> docker build . -t apistar:latest
+
+
+
