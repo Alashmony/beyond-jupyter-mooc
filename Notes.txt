@@ -260,3 +260,11 @@ EXPOSE 8000
 
 
 
+-- Airflow is a sophisticated scheduling framework that offers a lot of flixibility, it also can provide diagnostic reports on the job
+
+-- Airflow consists of:
+	* Tasks: an atomic command; Python code, bash script, http request...etc. Tasks cannot run directly, you have to rep in a DAC.
+	* DAG (Directed Acyclic Graph): A container for tasks that orchestinates them (Like AWS orchestinator)
+
+-- Examples of creating DAGs in the example and example-enriched folders	
+
