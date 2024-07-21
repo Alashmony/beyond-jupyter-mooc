@@ -268,3 +268,27 @@ EXPOSE 8000
 
 -- Examples of creating DAGs in the example and example-enriched folders	
 
+-- You might need addiotoinal components to the Data Science projects like:
+	* Cashe (In- memory) components: Radis
+	* Graph DB: Neo4J
+	* Webserver: NGINX
+	* Monitoring: Prometheus
+	* Text search: Solr 
+
+-- BONUS: Cookiecutter Template
+	* Bonus Section
+	* Welcome to this little bonus. In case you liked the stack presented in this video I have a little present for you :-)
+	* If you would like to start a new project it is tedious to set the whole docker structure up (and not really related to any meaningful data science content). That's why I create a Cookiecutter Template for it.
+
+-- Cookiecutter Template
+	* Cookiecutter is a command line tool (based on Python) that lets you generate new projects from a boilerplate. 
+	* Opposed to many other solutions (e.g. git fork), cookiecutter deeply looks for parameter you've specified and adjusts them also inside of files.
+
+-- If you would like to use this Cookiecutter template, just install cookiecutter via
+>> pip install cookiecutter
+
+-- and follow the instruction in this repository:
+
+https://github.com/jgoerner/data-science-stack-cookiecutter
+
+-- If you have any questions or remarks, feel free to use the Issue section of this repository.
